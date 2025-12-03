@@ -1,0 +1,195 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Sun, Moon, Phone, Mail, MapPin } from 'lucide-react';
+import SpaceNetwork from './components/SpaceNetwork';
+import { Logo } from './components/Logo';
+import { MerchantQRView } from './components/MerchantQRView';
+import { HomeView } from './components/HomeView';
+import { ERPView } from './components/ERPView';
+import { BookingView } from './components/BookingView';
+
+function App() {
+  const [isDark, setIsDark] = useState(false);
+  const [currentView, setCurrentView] = useState('home');
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Toggle Dark Mode
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
+  // Force Video Playback & Settings
+  useEffect(() => {
+    if (videoRef.current) {
+        videoRef.current.playbackRate = 0.8; // Slow smooth flyover
+        videoRef.current.play().catch(error => {
+            console.log("Video autoplay prevented:", error);
+        });
+    }
+  }, []);
+
+  const navItems = [
+    { id: 'home', label: 'Home' },
+    { id: 'merchant-qr', label: 'Merchant QR' },
+    { id: 'erp', label: 'ERP Solutions' },
+    { id: 'booking', label: 'Online Booking' },
+  ];
+
+  const renderView = () => {
+    switch(currentView) {
+      case 'home': return <HomeView onNavigate={setCurrentView} />;
+      case 'merchant-qr': return <MerchantQRView />;
+      case 'erp': return <ERPView />;
+      case 'booking': return <BookingView />;
+      default: return <HomeView onNavigate={setCurrentView} />;
+    }
+  };
+
+  return (
+    <div className={`relative min-h-screen w-full font-sans overflow-x-hidden transition-colors duration-500 ${isDark ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'}`}>
+      
+      {/* Background Container - Fixed to Viewport */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        {/* Background Video Layer (Halftone Style) */}
+        <div className="absolute inset-0 bg-white dark:bg-slate-900">
+          <video 
+            ref={videoRef}
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 
+              ${isDark ? 'opacity-20 mix-blend-luminosity' : 'opacity-30 mix-blend-multiply'}
+              grayscale contrast-125 brightness-110`}
+            src="https://videos.pexels.com/video-files/2882776/2882776-hd_1920_1080_30fps.mp4"
+          />
+          
+          {/* Gradient Overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/60 to-white/90 dark:from-slate-900/90 dark:via-slate-900/60 dark:to-slate-900" />
+        </div>
+
+        {/* Background Dotted Pattern (Screen) */}
+        <div 
+          className="absolute inset-0 opacity-[0.35] dark:opacity-[0.25] pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `radial-gradient(${isDark ? '#2ed1a8' : '#2e57d1'} 1.5px, transparent 1.5px)`,
+            backgroundSize: '8px 8px'
+          }}
+        />
+        
+        {/* Layer 0: Space Network (Deep Background) */}
+        <SpaceNetwork isDark={isDark} />
+      </div>
+
+      {/* Navigation - Sticky Layer 50 */}
+      <nav className="sticky top-0 z-50 px-4 md:px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border border-white/20 dark:border-slate-800 rounded-2xl px-6 py-3 shadow-lg">
+          <button onClick={() => setCurrentView('home')} className="focus:outline-none">
+             <Logo className="scale-90 md:scale-100" />
+          </button>
+          
+          {/* Navigation Links (Desktop) */}
+          <div className="hidden lg:flex items-center gap-2">
+            {navItems.map((item) => (
+              <button 
+                key={item.id}
+                onClick={() => setCurrentView(item.id)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 
+                  ${currentView === item.id 
+                    ? 'bg-b2u-blue/10 text-b2u-blue dark:text-b2u-cyan' 
+                    : 'text-slate-600 dark:text-slate-300 hover:text-b2u-blue dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                  }`}
+              >
+                {item.label}
+              </button>
+            ))}
+            
+            {/* Contact Link scrolls to footer */}
+            <button 
+                onClick={() => document.getElementById('footer-contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-b2u-blue dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
+            >
+                Contact
+            </button>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsDark(!isDark)}
+              className="p-2 md:p-2.5 rounded-full bg-slate-200/50 dark:bg-slate-800/50 hover:bg-slate-300/50 dark:hover:bg-slate-700/50 transition-colors border border-slate-300/20 dark:border-white/10"
+            >
+              {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-slate-600" />}
+            </button>
+            
+            {/* Mobile Menu Button (Simple implementation) */}
+            <div className="lg:hidden">
+                <button 
+                  onClick={() => {
+                    // Simple logic to cycle views on mobile click for demo, or could open drawer
+                    const nextIndex = (navItems.findIndex(n => n.id === currentView) + 1) % navItems.length;
+                    setCurrentView(navItems[nextIndex].id);
+                  }}
+                  className="p-2 text-slate-600 dark:text-slate-300"
+                >
+                    <span className="sr-only">Menu</span>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content Area */}
+      <main className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
+        {renderView()}
+      </main>
+
+      {/* Footer / Contact Section */}
+      <footer id="footer-contact" className="relative z-10 w-full bg-white/80 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 mt-12">
+        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <Logo className="mb-4" />
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Empowering Sri Lankan businesses with next-generation digital payment and management solutions.
+                </p>
+            </div>
+            
+            <div>
+                <h3 className="font-bold text-slate-900 dark:text-white mb-4">Services</h3>
+                <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                    <li><button onClick={() => setCurrentView('merchant-qr')} className="hover:text-b2u-blue">Merchant QR Solutions</button></li>
+                    <li><button onClick={() => setCurrentView('erp')} className="hover:text-b2u-blue">ERP Solutions</button></li>
+                    <li><button onClick={() => setCurrentView('booking')} className="hover:text-b2u-blue">Online Booking</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 className="font-bold text-slate-900 dark:text-white mb-4">Contact Us</h3>
+                <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                    <li className="flex items-center gap-2">
+                        <Mail size={16} className="text-b2u-blue" />
+                        <a href="mailto:adminb2u@gmail.com" className="hover:text-b2u-blue">adminb2u@gmail.com</a>
+                    </li>
+                    <li className="flex items-center gap-2">
+                        <Phone size={16} className="text-b2u-blue" />
+                        <a href="tel:+94775804903" className="hover:text-b2u-blue">+94 77 580 4903</a>
+                    </li>
+                    <li className="flex items-start gap-2">
+                        <MapPin size={16} className="text-b2u-blue mt-0.5" />
+                        <span>Chakindarama Road, Mt Lavinia,<br/>Sri Lanka</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div className="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400">
+            &copy; {new Date().getFullYear()} B2U Holdings. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
