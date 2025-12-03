@@ -1,3 +1,4 @@
+
 export interface AnimatedCounterProps {
   end: number;
   duration?: number;
@@ -5,6 +6,7 @@ export interface AnimatedCounterProps {
   suffix?: string;
   className?: string;
   decimals?: number;
+  repeatDelay?: number;
 }
 
 export interface NavItem {

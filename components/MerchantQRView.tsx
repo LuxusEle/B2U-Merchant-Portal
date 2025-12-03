@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Lock, MapPin, FileText, ChevronLeft, ChevronRight, X, Maximize2, Globe } from 'lucide-react';
 import { RaisedBalanceDisplay } from './RaisedBalanceDisplay';
@@ -5,6 +6,7 @@ import { DescriptionRotator } from './DescriptionRotator';
 import { BackgroundGraph } from './BackgroundGraph';
 import SpaceNetwork from './SpaceNetwork';
 import { AuthMode } from '../types';
+import { AnimatedCounter } from './AnimatedCounter';
 
 const referenceData = [
   {
@@ -250,6 +252,8 @@ const referenceData = [
 export const MerchantQRView: React.FC = () => {
   const [authMode, setAuthMode] = useState<AuthMode>('signin');
   const [walletAmount, setWalletAmount] = useState(84392.50);
+  const [totalVolume, setTotalVolume] = useState(1250450.00);
+  const [transactionCount, setTransactionCount] = useState(142);
   const [transactionSource, setTransactionSource] = useState("Thambili Stall #4");
   const [showNotification, setShowNotification] = useState(false);
   const [lastIncrement, setLastIncrement] = useState(0);
@@ -270,7 +274,11 @@ export const MerchantQRView: React.FC = () => {
         setShowNotification(true);
         setLastIncrement(amount);
         setTransactionSource(source);
+        
+        // Update all metrics
         setWalletAmount(prev => prev + amount);
+        setTotalVolume(prev => prev + amount);
+        setTransactionCount(prev => prev + 1);
 
         setTimeout(() => setShowNotification(false), 2500);
 
@@ -397,9 +405,34 @@ export const MerchantQRView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-5 flex flex-col items-center bg-gradient-to-b from-transparent to-slate-50/50 dark:to-black/20">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Available Balance</p>
-                    <RaisedBalanceDisplay amount={walletAmount} />
+                <div className="p-5 flex flex-col gap-5 bg-gradient-to-b from-transparent to-slate-50/50 dark:to-black/20">
+                    {/* 1. Available Balance */}
+                    <div className="flex flex-col items-center">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available Balance</p>
+                        <RaisedBalanceDisplay amount={walletAmount} />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="w-full h-px bg-slate-200/50 dark:bg-slate-700/50" />
+
+                    {/* 2. Total Volume & 3. Total Transactions */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col items-center p-3 rounded-xl bg-white/40 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Volume</p>
+                            <span className="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono tracking-tight">
+                                <span className="text-xs text-slate-400 mr-1">LKR</span>
+                                {(totalVolume / 1000000).toFixed(2)}M
+                            </span>
+                        </div>
+                         <div className="flex flex-col items-center p-3 rounded-xl bg-white/40 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Transactions</p>
+                            <AnimatedCounter 
+                                end={transactionCount} 
+                                duration={500} // Fast update for live feel
+                                className="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono tracking-tight"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Live Notification */}

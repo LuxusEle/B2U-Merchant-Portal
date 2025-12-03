@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { QrCode, Server, Calendar, ArrowRight, TrendingUp, ShieldCheck, Globe } from 'lucide-react';
+import { QrCode, Server, Calendar, ArrowRight, TrendingUp, ShieldCheck, Globe, Users } from 'lucide-react';
+import { AnimatedCounter } from './AnimatedCounter';
 
 interface HomeViewProps {
   onNavigate: (view: string) => void;
@@ -38,14 +40,31 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-b2u-blue/20 to-b2u-cyan/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative h-full glass-panel rounded-3xl p-8 border border-white/50 dark:border-slate-700 hover:border-b2u-blue/50 dark:hover:border-b2u-teal/50 transition-all duration-300 flex flex-col items-start gap-4 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-2xl bg-b2u-blue/10 dark:bg-b2u-blue/20 flex items-center justify-center text-b2u-blue dark:text-b2u-cyan mb-2">
-              <QrCode size={28} />
+            
+            {/* Header: Icon + Counter Horizontal */}
+            <div className="w-full flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-b2u-blue/10 dark:bg-b2u-blue/20 flex items-center justify-center text-b2u-blue dark:text-b2u-cyan">
+                  <QrCode size={28} />
+                </div>
+                <div className="flex flex-col items-end">
+                    <AnimatedCounter 
+                        end={20} 
+                        duration={5000} 
+                        repeatDelay={3000} 
+                        className="text-3xl font-bold text-b2u-blue dark:text-b2u-cyan tabular-nums" 
+                    />
+                    <span className="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider">Users</span>
+                </div>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Merchant QR Solutions</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-              Accept LKR payments instantly via dynamic QR codes. Perfect for retail, tuk-tuks, and street vendors.
-            </p>
-            <div className="mt-auto flex items-center text-b2u-blue font-semibold text-sm group-hover:gap-2 transition-all">
+            
+            <div className="space-y-2">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Merchant QR Solutions</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Accept LKR payments instantly via dynamic QR codes. Perfect for retail, tuk-tuks, and street vendors.
+                </p>
+            </div>
+            
+            <div className="mt-auto pt-4 flex items-center text-b2u-blue font-semibold text-sm group-hover:gap-2 transition-all">
               <span>Access Portal</span>
               <ArrowRight size={16} className="ml-1" />
             </div>
@@ -59,14 +78,31 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-b2u-blue/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative h-full glass-panel rounded-3xl p-8 border border-white/50 dark:border-slate-700 hover:border-purple-400/50 transition-all duration-300 flex flex-col items-start gap-4 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-2">
-              <Server size={28} />
+            
+            {/* Header: Icon + Counter Horizontal */}
+            <div className="w-full flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <Server size={28} />
+                </div>
+                <div className="flex flex-col items-end">
+                    <AnimatedCounter 
+                        end={12} 
+                        duration={5000} 
+                        repeatDelay={3000} 
+                        className="text-3xl font-bold text-purple-600 dark:text-purple-400 tabular-nums" 
+                    />
+                    <span className="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider">Enterprises</span>
+                </div>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">ERP Solutions</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-              Comprehensive Enterprise Resource Planning to manage inventory, payroll, and supply chains efficiently.
-            </p>
-            <div className="mt-auto flex items-center text-purple-600 dark:text-purple-400 font-semibold text-sm group-hover:gap-2 transition-all">
+
+            <div className="space-y-2">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">ERP Solutions</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Comprehensive Enterprise Resource Planning to manage inventory, payroll, and supply chains efficiently.
+                </p>
+            </div>
+            
+            <div className="mt-auto pt-4 flex items-center text-purple-600 dark:text-purple-400 font-semibold text-sm group-hover:gap-2 transition-all">
               <span>Learn More</span>
               <ArrowRight size={16} className="ml-1" />
             </div>
@@ -80,14 +116,31 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-b2u-teal/20 to-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative h-full glass-panel rounded-3xl p-8 border border-white/50 dark:border-slate-700 hover:border-b2u-teal/50 transition-all duration-300 flex flex-col items-start gap-4 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-2xl bg-b2u-teal/10 dark:bg-b2u-teal/20 flex items-center justify-center text-b2u-teal mb-2">
-              <Calendar size={28} />
+            
+            {/* Header: Icon + Counter Horizontal */}
+            <div className="w-full flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-b2u-teal/10 dark:bg-b2u-teal/20 flex items-center justify-center text-b2u-teal">
+                  <Calendar size={28} />
+                </div>
+                <div className="flex flex-col items-end">
+                    <AnimatedCounter 
+                        end={5} 
+                        duration={5000} 
+                        repeatDelay={3000} 
+                        className="text-3xl font-bold text-b2u-teal dark:text-emerald-400 tabular-nums" 
+                    />
+                    <span className="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider">Bookings</span>
+                </div>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Online Booking</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-              Seamless reservation systems for hotels, restaurants, and service providers. Integrated payment gateways.
-            </p>
-            <div className="mt-auto flex items-center text-b2u-teal font-semibold text-sm group-hover:gap-2 transition-all">
+
+            <div className="space-y-2">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Online Booking</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Seamless reservation systems for hotels, restaurants, and service providers. Integrated payment gateways.
+                </p>
+            </div>
+            
+            <div className="mt-auto pt-4 flex items-center text-b2u-teal font-semibold text-sm group-hover:gap-2 transition-all">
               <span>Explore</span>
               <ArrowRight size={16} className="ml-1" />
             </div>
