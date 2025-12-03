@@ -29,19 +29,26 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    let width = canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth;
+    let height = canvas.parentElement ? canvas.parentElement.clientHeight : window.innerHeight;
     
-    // World dimensions
+    // World dimensions - scale relative to container
     const WORLD_WIDTH = width * 1.5;
     const WORLD_HEIGHT = height * 1.5;
 
     const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      const parent = canvas.parentElement;
+      if (parent) {
+        width = parent.clientWidth;
+        height = parent.clientHeight;
+      } else {
+        width = window.innerWidth;
+        height = window.innerHeight;
+      }
       canvas.width = width;
       canvas.height = height;
     };
+    
     window.addEventListener('resize', resize);
     resize();
 
@@ -50,7 +57,9 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
 
     // Initialize Nodes - GREATLY REDUCED COUNT
     const nodes: Node[] = [];
-    const nodeCount = 25; // Reduced further to 25
+    // Adjust node count based on area approx
+    const areaFactor = (width * height) / (1920 * 1080);
+    const nodeCount = Math.max(15, Math.floor(25 * areaFactor)); 
     
     for (let i = 0; i < nodeCount; i++) {
       nodes.push({
@@ -63,7 +72,7 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
     }
 
     const pulses: Pulse[] = [];
-    const maxConnectionDist = 400; // Increased distance so nodes still connect despite low count
+    const maxConnectionDist = Math.max(width, height) * 0.4; // Responsive distance
 
     // Helper to spawn a pulse
     const triggerPulse = (sourceIdx: number) => {
@@ -102,7 +111,6 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
       ctx.clearRect(0, 0, width, height);
 
       // Colors based on theme - UPDATED FOR VISIBILITY
-      // Significantly darkened and increased opacity for light mode
       const nodeBaseColor = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(10, 30, 90, 0.6)';
       const pulseColor = isDark ? '46, 209, 168' : '0, 80, 200'; // Darker blue for light mode
       const impactColor = isDark ? '#fff' : '#0f172a';
@@ -214,8 +222,8 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
   return (
     <canvas 
       ref={canvasRef} 
-      // Increased opacity for light mode (opacity-80 instead of opacity-40)
-      className={`absolute inset-0 w-full h-full pointer-events-none z-0 ${isDark ? 'mix-blend-screen' : 'mix-blend-multiply opacity-80'}`}
+      // Increased opacity for light mode
+      className={`absolute inset-0 w-full h-full pointer-events-none z-0 ${isDark ? 'mix-blend-screen opacity-40' : 'mix-blend-multiply opacity-30'}`}
     />
   );
 };

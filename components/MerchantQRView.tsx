@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Lock, MapPin, FileText, ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
 import { RaisedBalanceDisplay } from './RaisedBalanceDisplay';
 import { DescriptionRotator } from './DescriptionRotator';
 import { BackgroundGraph } from './BackgroundGraph';
+import SpaceNetwork from './SpaceNetwork';
 import { AuthMode } from '../types';
 
 const referenceData = [
@@ -544,41 +544,30 @@ export const MerchantQRView: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
            {/* Backdrop */}
            <div 
-             className="absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity"
+             className="absolute inset-0 bg-slate-900/90 backdrop-blur-md transition-opacity"
              onClick={() => setActiveRefIndex(null)}
            ></div>
            
            {/* Modal Content - Expanded width to max-w-6xl */}
            <div className="relative w-full max-w-6xl glass-panel rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[60vh] animate-float">
               
-              {/* Navigation Left */}
-              <button 
-                onClick={handlePrevRef}
-                className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-600 dark:text-white backdrop-blur-sm border border-white/10 transition-all hover:scale-110"
-              >
-                 <ChevronLeft size={32} />
-              </button>
-
-              {/* Navigation Right */}
-              <button 
-                onClick={handleNextRef}
-                className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-600 dark:text-white backdrop-blur-sm border border-white/10 transition-all hover:scale-110"
-              >
-                 <ChevronRight size={32} />
-              </button>
+              {/* Neural Network Background INSIDE Modal */}
+              <div className="absolute inset-0 z-0">
+                  <SpaceNetwork isDark={true} />
+              </div>
 
               {/* Close Button */}
               <button 
                 onClick={() => setActiveRefIndex(null)}
-                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-slate-500 dark:text-slate-300 transition-colors hover:rotate-90 duration-200"
+                className="absolute top-4 right-4 z-30 p-2 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-slate-500 dark:text-slate-300 transition-colors hover:rotate-90 duration-200"
               >
                  <X size={20} />
               </button>
 
-              {/* Sidebar / Index */}
-              <div className="w-full md:w-1/4 bg-slate-100/50 dark:bg-black/20 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 p-6 flex flex-col justify-center relative overflow-hidden">
+              {/* Sidebar / Index - z-10 to sit above network */}
+              <div className="relative z-10 w-full md:w-1/4 bg-slate-100/80 dark:bg-slate-900/60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 p-6 flex flex-col justify-center overflow-hidden">
                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-b2u-blue to-b2u-teal"></div>
-                 <span className="text-8xl font-black text-slate-200 dark:text-slate-800 absolute -bottom-4 -right-4 select-none opacity-50">
+                 <span className="text-8xl font-black text-slate-400 dark:text-slate-600 absolute -bottom-4 -right-4 select-none opacity-20">
                     {String(referenceData[activeRefIndex].id).padStart(2, '0')}
                  </span>
                  <div className="relative z-10">
@@ -591,20 +580,31 @@ export const MerchantQRView: React.FC = () => {
                  </div>
               </div>
 
-              {/* Content Area - Increased Padding for Navigation arrows */}
-              <div className="w-full md:w-3/4 p-8 md:px-24 md:py-16 flex flex-col justify-center bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl">
+              {/* Content Area - z-10 to sit above network */}
+              <div className="relative z-10 w-full md:w-3/4 p-8 md:px-16 md:py-12 flex flex-col justify-between bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl">
                  <div className="prose prose-lg dark:prose-invert max-w-none">
                     {referenceData[activeRefIndex].content}
                  </div>
                  
-                 {/* Mobile Navigation */}
-                 <div className="flex md:hidden justify-between mt-8 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <button onClick={handlePrevRef} className="flex items-center gap-1 text-sm font-medium text-slate-500 dark:text-slate-400">
-                       <ChevronLeft size={16} /> Prev
-                    </button>
-                    <button onClick={handleNextRef} className="flex items-center gap-1 text-sm font-medium text-b2u-blue dark:text-b2u-teal">
-                       Next <ChevronRight size={16} />
-                    </button>
+                 {/* Bottom Navigation - Replaces side buttons */}
+                 <div className="flex justify-between items-center mt-12 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <span className="text-xs font-mono text-slate-400 dark:text-slate-500 hidden md:block">
+                        Use Arrow Keys to Navigate
+                    </span>
+                    <div className="flex items-center gap-4 ml-auto w-full md:w-auto justify-between md:justify-end">
+                        <button 
+                            onClick={handlePrevRef} 
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors"
+                        >
+                            <ChevronLeft size={18} /> Previous
+                        </button>
+                        <button 
+                            onClick={handleNextRef} 
+                            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-b2u-blue hover:bg-b2u-blue/90 text-white text-sm font-bold shadow-lg shadow-b2u-blue/20 transition-all hover:translate-x-1"
+                        >
+                            Next <ChevronRight size={18} />
+                        </button>
+                    </div>
                  </div>
               </div>
            </div>
