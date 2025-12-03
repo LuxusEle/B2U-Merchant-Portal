@@ -7,6 +7,7 @@ import { BackgroundGraph } from './BackgroundGraph';
 import SpaceNetwork from './SpaceNetwork';
 import { AuthMode } from '../types';
 import { AnimatedCounter } from './AnimatedCounter';
+import { MockQRTransaction } from './MockQRTransaction';
 
 const referenceData = [
   {
@@ -341,7 +342,7 @@ export const MerchantQRView: React.FC = () => {
       <BackgroundGraph />
 
       {/* Top Section: Hero, Wallet, Login */}
-      <div className="relative w-full flex flex-col lg:flex-row gap-8 lg:gap-20 items-center lg:items-center min-h-[calc(100vh-140px)]">
+      <div className="relative w-full flex flex-col lg:flex-row gap-8 lg:gap-20 items-center lg:items-start min-h-[calc(100vh-140px)]">
         
         {/* Mobile Layout: Order 2 (Bottom) / Desktop Layout: Order 1 (Left) */}
         <div className="order-2 lg:order-1 flex-1 w-full flex flex-col items-center lg:items-start space-y-6 lg:space-y-10 relative z-10">
@@ -455,8 +456,15 @@ export const MerchantQRView: React.FC = () => {
         </div>
 
         {/* Mobile Layout: Order 1 (Top) / Desktop Layout: Order 2 (Right) */}
-        <div className="order-1 lg:order-2 w-full max-w-sm md:max-w-md mx-auto lg:mr-0 mb-4 lg:mb-0 relative z-20">
-            <div className="glass-panel rounded-3xl p-6 md:p-8 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-black/50 border border-white/50 dark:border-slate-700 backdrop-blur-2xl relative transform transition-all duration-500 hover:shadow-2xl">
+        <div className="order-1 lg:order-2 w-full max-w-sm md:max-w-md mx-auto lg:mr-0 mb-4 lg:mb-0 relative z-20 flex flex-col items-center">
+            
+            {/* New Mock QR Animation Widget */}
+            <div className="mb-6 transform scale-90 md:scale-100">
+                <MockQRTransaction />
+            </div>
+
+            {/* Sign In Widget - Lowered by margin-top */}
+            <div className="w-full glass-panel rounded-3xl p-6 md:p-8 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-black/50 border border-white/50 dark:border-slate-700 backdrop-blur-2xl relative transform transition-all duration-500 hover:shadow-2xl mt-4 lg:mt-20">
             
             <div className="mb-6 text-center lg:text-left">
                 <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
