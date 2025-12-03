@@ -85,9 +85,30 @@ export const MockQRTransaction: React.FC = () => {
              
              {/* LankaQR Logo Overlay */}
              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-white px-2 py-1 rounded shadow-md border border-slate-100 flex flex-col items-center justify-center">
-                   <div className="text-[10px] font-black tracking-tighter text-[#8B0000] leading-none">LANKA</div>
-                   <div className="text-[14px] font-black tracking-tighter text-[#8B0000] leading-none">QR</div>
+                <div className="bg-white px-3 py-1.5 rounded-xl shadow-lg border border-slate-100 flex flex-col items-center justify-center">
+                   
+                   {/* Graphic Logo */}
+                   <svg width="48" height="42" viewBox="0 0 100 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* Red Part (Left Hook) */}
+                      <path d="M30 80 L 30 50 L 55 25" stroke="#B91C1C" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M25 80 H 55" stroke="#B91C1C" strokeWidth="8" strokeLinecap="round"/>
+                      
+                      {/* Orange Part (Box Q) */}
+                      <rect x="40" y="35" width="35" height="35" rx="8" stroke="#F97316" strokeWidth="7" fill="white"/>
+                      <rect x="48" y="43" width="7" height="7" fill="#F97316"/>
+                      <rect x="60" y="43" width="7" height="7" fill="#F97316"/>
+                      <rect x="48" y="55" width="7" height="7" fill="#F97316"/>
+                      <rect x="60" y="55" width="7" height="7" fill="#F97316"/>
+                      
+                      {/* Green Part (Right Z) */}
+                      <path d="M85 30 V 50 L 95 75" stroke="#15803D" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                   </svg>
+
+                   {/* Text Logo */}
+                   <div className="flex items-baseline gap-0.5 mt-0.5">
+                      <span className="text-[12px] font-black tracking-tighter text-[#1e1b4b] leading-none">LANKA</span>
+                      <span className="text-[12px] font-black tracking-tighter text-[#B91C1C] leading-none">QR</span>
+                   </div>
                 </div>
              </div>
           </div>
