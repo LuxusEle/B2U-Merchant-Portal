@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 
 interface Node {
@@ -49,8 +50,13 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
       canvas.height = height;
     };
     
-    window.addEventListener('resize', resize);
+    // Initial resize to catch parent dimensions
     resize();
+    
+    // Additional delay to catch flex/grid layout adjustments
+    setTimeout(resize, 100);
+
+    window.addEventListener('resize', resize);
 
     // Camera state - VERY SLOW
     const camera = { x: 0, y: 0, vx: 0.02, vy: 0.01 };
@@ -111,7 +117,7 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
       ctx.clearRect(0, 0, width, height);
 
       // Colors based on theme - UPDATED FOR VISIBILITY
-      const nodeBaseColor = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(10, 30, 90, 0.6)';
+      const nodeBaseColor = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(10, 30, 90, 0.6)'; // Increased base opacity for dark mode
       const pulseColor = isDark ? '46, 209, 168' : '0, 80, 200'; // Darker blue for light mode
       const impactColor = isDark ? '#fff' : '#0f172a';
       const shadowColor = isDark ? '#2ed1a8' : '#2563eb';
@@ -222,8 +228,8 @@ const SpaceNetwork: React.FC<SpaceNetworkProps> = ({ isDark = false }) => {
   return (
     <canvas 
       ref={canvasRef} 
-      // Increased opacity for light mode
-      className={`absolute inset-0 w-full h-full pointer-events-none z-0 ${isDark ? 'mix-blend-screen opacity-40' : 'mix-blend-multiply opacity-30'}`}
+      // Increased opacity for dark mode visibility
+      className={`absolute inset-0 w-full h-full pointer-events-none z-0 ${isDark ? 'mix-blend-screen opacity-70' : 'mix-blend-multiply opacity-30'}`}
     />
   );
 };

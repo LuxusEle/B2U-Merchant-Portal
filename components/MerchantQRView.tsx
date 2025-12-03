@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Lock, MapPin, FileText, ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
+import { ArrowRight, Lock, MapPin, FileText, ChevronLeft, ChevronRight, X, Maximize2, Globe } from 'lucide-react';
 import { RaisedBalanceDisplay } from './RaisedBalanceDisplay';
 import { DescriptionRotator } from './DescriptionRotator';
 import { BackgroundGraph } from './BackgroundGraph';
@@ -11,11 +11,11 @@ const referenceData = [
     id: 1,
     title: "Who We Are",
     content: (
-      <div className="space-y-4">
-        <p className="text-lg font-medium text-slate-800 dark:text-slate-200">
+      <div className="space-y-6">
+        <p className="text-xl md:text-2xl font-medium text-slate-800 dark:text-slate-100 leading-relaxed">
           <strong className="text-b2u-blue dark:text-b2u-teal">B2U.App</strong> is a Sri Lankan fintech startup focused on increasing LankaQR usage, merchant transaction volume, and driving national digital transformation.
         </p>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-lg text-slate-600 dark:text-slate-300">
           We support banks by onboarding underperforming merchants and increasing QR transaction adoption.
         </p>
       </div>
@@ -25,16 +25,16 @@ const referenceData = [
     id: 2,
     title: "Market Problem We Address",
     content: (
-      <div className="space-y-4">
-        <p className="text-slate-600 dark:text-slate-400">Many merchants receive QR codes from banks, but face significant challenges:</p>
-        <ul className="list-disc pl-5 space-y-2 text-slate-700 dark:text-slate-300">
+      <div className="space-y-6">
+        <p className="text-lg text-slate-600 dark:text-slate-300">Many merchants receive QR codes from banks, but face significant challenges:</p>
+        <ul className="list-disc pl-6 space-y-3 text-lg text-slate-700 dark:text-slate-200">
           <li>Monthly transactions are often <strong>below Rs. 20,000</strong></li>
           <li>Customer adoption remains low</li>
           <li>Heavy dependency on cash persists</li>
           <li>Banks incur costs issuing QR codes with <strong>low ROI</strong></li>
           <li>Public awareness of digital payments is limited</li>
         </ul>
-        <p className="font-bold text-b2u-blue mt-4">B2U.App bridges this gap.</p>
+        <p className="text-xl font-bold text-b2u-blue mt-4">B2U.App bridges this gap.</p>
       </div>
     )
   },
@@ -42,9 +42,9 @@ const referenceData = [
     id: 3,
     title: "Our Value Proposition",
     content: (
-      <div className="space-y-4">
-        <p className="text-slate-600 dark:text-slate-400">We increase QR transaction usage by providing:</p>
-        <ul className="space-y-3">
+      <div className="space-y-6">
+        <p className="text-lg text-slate-600 dark:text-slate-300">We increase QR transaction usage by providing:</p>
+        <ul className="space-y-4">
           {[
             "Ability to create Dynamic QR codes",
             "Real-time verification via bank APIs",
@@ -52,9 +52,9 @@ const referenceData = [
             "Increased trust & convenience",
             "Driving customer digital payment usage"
           ].map((item, i) => (
-            <li key={i} className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-b2u-teal" />
-              <span className="text-slate-700 dark:text-slate-300">{item}</span>
+            <li key={i} className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-b2u-teal shadow-[0_0_10px_rgba(46,209,168,0.5)]" />
+              <span className="text-lg text-slate-700 dark:text-slate-200">{item}</span>
             </li>
           ))}
         </ul>
@@ -65,8 +65,8 @@ const referenceData = [
     id: 4,
     title: "How B2U.App Works",
     content: (
-      <div className="space-y-4">
-        <ol className="list-decimal pl-5 space-y-2 text-slate-700 dark:text-slate-300">
+      <div className="space-y-6">
+        <ol className="list-decimal pl-6 space-y-3 text-lg text-slate-700 dark:text-slate-200 marker:text-b2u-blue dark:marker:text-b2u-teal marker:font-bold">
           <li>Bank issues <strong>LankaQR</strong></li>
           <li>Bank shares <strong>merchant list</strong> and <strong>verification API</strong></li>
           <li>B2U.App activates merchant on the platform</li>
@@ -83,7 +83,7 @@ const referenceData = [
     id: 5,
     title: "Benefits to Merchants",
     content: (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
         {[
           "No need for petty cash or coins",
           "Eliminates losses on small transactions",
@@ -95,8 +95,8 @@ const referenceData = [
           "Easy payments for foreign customers",
           "Zero fraud risk"
         ].map((item, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-             <div className="mt-1.5 w-1 h-1 rounded-full bg-b2u-blue shrink-0" />
+          <div key={i} className="flex items-start gap-3 text-base md:text-lg text-slate-700 dark:text-slate-200">
+             <div className="mt-2 w-1.5 h-1.5 rounded-full bg-b2u-blue shrink-0" />
              {item}
           </div>
         ))}
@@ -107,21 +107,21 @@ const referenceData = [
     id: 6,
     title: "Benefits to Customers",
     content: (
-      <ul className="space-y-3 text-slate-700 dark:text-slate-300">
-         <li className="flex items-center gap-3">
-            <div className="p-1 rounded bg-green-100 dark:bg-green-900/30 text-green-600"><ArrowRight size={14}/></div>
+      <ul className="space-y-5 text-lg text-slate-700 dark:text-slate-200">
+         <li className="flex items-center gap-4 p-4 rounded-xl bg-white/30 dark:bg-white/5 border border-white/20">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600"><ArrowRight size={18}/></div>
             No need to carry cash or cards
          </li>
-         <li className="flex items-center gap-3">
-            <div className="p-1 rounded bg-green-100 dark:bg-green-900/30 text-green-600"><ArrowRight size={14}/></div>
+         <li className="flex items-center gap-4 p-4 rounded-xl bg-white/30 dark:bg-white/5 border border-white/20">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600"><ArrowRight size={18}/></div>
             Seamless digital transactions
          </li>
-         <li className="flex items-center gap-3">
-            <div className="p-1 rounded bg-green-100 dark:bg-green-900/30 text-green-600"><ArrowRight size={14}/></div>
+         <li className="flex items-center gap-4 p-4 rounded-xl bg-white/30 dark:bg-white/5 border border-white/20">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600"><ArrowRight size={18}/></div>
             Fast, secure, authenticated payments
          </li>
-         <li className="flex items-center gap-3">
-            <div className="p-1 rounded bg-green-100 dark:bg-green-900/30 text-green-600"><ArrowRight size={14}/></div>
+         <li className="flex items-center gap-4 p-4 rounded-xl bg-white/30 dark:bg-white/5 border border-white/20">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600"><ArrowRight size={18}/></div>
             Confidence when paying verified merchants
          </li>
       </ul>
@@ -131,12 +131,12 @@ const referenceData = [
     id: 7,
     title: "Benefits to Banks",
     content: (
-      <ul className="space-y-2 text-slate-700 dark:text-slate-300">
+      <ul className="space-y-4 text-lg text-slate-700 dark:text-slate-200">
         <li>• New business brought through B2U.App</li>
         <li>• Reduced cash risk, cost & transport requirements</li>
         <li>• Reduced operational overhead</li>
         <li>• Clear customer/merchant transaction insights</li>
-        <li className="font-semibold text-b2u-blue dark:text-b2u-teal">• Approx. 1% interchange revenue per QR transaction</li>
+        <li className="font-bold text-b2u-blue dark:text-b2u-teal text-xl p-2 bg-b2u-blue/5 rounded-lg">• Approx. 1% interchange revenue per QR transaction</li>
         <li>• Increased low-cost deposits (CASA)</li>
         <li>• Stronger digital presence</li>
       </ul>
@@ -146,9 +146,9 @@ const referenceData = [
     id: 8,
     title: "Benefits to CBSL",
     content: (
-      <div className="space-y-3">
-        <p className="text-slate-700 dark:text-slate-300">Supporting national interests through:</p>
-        <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+      <div className="space-y-6">
+        <p className="text-xl text-slate-700 dark:text-slate-200 font-medium">Supporting national interests through:</p>
+        <ul className="list-disc pl-6 space-y-3 text-lg text-slate-600 dark:text-slate-300">
            <li>Reduced cash printing & circulation cost</li>
            <li>Lower cost of physical currency replacement</li>
            <li>Supports national digital transformation</li>
@@ -161,11 +161,11 @@ const referenceData = [
     id: 9,
     title: "Benefits to Government",
     content: (
-      <ul className="space-y-2 text-slate-700 dark:text-slate-300">
-        <li>• Lower nationwide currency management cost</li>
-        <li>• Improved tax visibility via income pattern recognition</li>
-        <li>• No commissions paid to foreign networks (Visa/Master)</li>
-        <li>• Improved transparency and financial traceability</li>
+      <ul className="space-y-4 text-lg text-slate-700 dark:text-slate-200">
+        <li className="p-3 border-l-4 border-b2u-blue bg-white/30 dark:bg-slate-800/30">Lower nationwide currency management cost</li>
+        <li className="p-3 border-l-4 border-b2u-cyan bg-white/30 dark:bg-slate-800/30">Improved tax visibility via income pattern recognition</li>
+        <li className="p-3 border-l-4 border-b2u-teal bg-white/30 dark:bg-slate-800/30">No commissions paid to foreign networks (Visa/Master)</li>
+        <li className="p-3 border-l-4 border-purple-500 bg-white/30 dark:bg-slate-800/30">Improved transparency and financial traceability</li>
       </ul>
     )
   },
@@ -173,13 +173,14 @@ const referenceData = [
     id: 10,
     title: "Environmental Benefits",
     content: (
-      <div className="flex flex-col gap-4">
-        <div className="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
-          <p className="font-medium text-green-800 dark:text-green-300">Reduced physical cash = lower carbon footprint</p>
+      <div className="flex flex-col gap-6 justify-center h-full">
+        <div className="p-8 rounded-2xl bg-green-50 dark:bg-emerald-900/20 border border-green-100 dark:border-emerald-800/50 flex flex-col items-center text-center">
+          <Globe size={48} className="text-green-600 dark:text-emerald-400 mb-4" />
+          <p className="text-2xl font-bold text-green-800 dark:text-emerald-300">Reduced physical cash <br/>= lower carbon footprint</p>
         </div>
-        <ul className="space-y-2 text-slate-700 dark:text-slate-300">
-          <li>• Supports green, sustainable financial initiatives</li>
-          <li>• Contributes to a digital, eco-friendly Sri Lanka</li>
+        <ul className="space-y-3 text-lg text-center text-slate-700 dark:text-slate-300">
+          <li>Supports green, sustainable financial initiatives</li>
+          <li>Contributes to a digital, eco-friendly Sri Lanka</li>
         </ul>
       </div>
     )
@@ -188,17 +189,20 @@ const referenceData = [
     id: 11,
     title: "Request from Bank",
     content: (
-      <div className="space-y-4">
-        <p className="text-slate-600 dark:text-slate-400">To enable B2U.App, we request:</p>
-        <div className="grid gap-3">
-           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50">
-             1. <strong>Merchant list</strong> (registered LankaQR merchants)
+      <div className="space-y-6">
+        <p className="text-xl text-slate-600 dark:text-slate-300">To enable B2U.App, we request:</p>
+        <div className="grid gap-4">
+           <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm flex items-center gap-4">
+             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 text-white font-bold">1</span>
+             <span className="text-lg"><strong>Merchant list</strong> (registered LankaQR merchants)</span>
            </div>
-           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50">
-             2. <strong>API access</strong> for transaction verification
+           <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm flex items-center gap-4">
+             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 text-white font-bold">2</span>
+             <span className="text-lg"><strong>API access</strong> for transaction verification</span>
            </div>
-           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50">
-             3. Basic integration assistance from digital team
+           <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm flex items-center gap-4">
+             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 text-white font-bold">3</span>
+             <span className="text-lg">Basic integration assistance from digital team</span>
            </div>
         </div>
       </div>
@@ -208,13 +212,13 @@ const referenceData = [
     id: 12,
     title: "Primary Target Segments",
     content: (
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-3 content-center h-full">
         {[
           "Ride-hailing drivers", "Delivery riders", "Small retailers",
           "Food stalls", "Professional services", "Parking sector",
           "Transport sector", "Micro businesses"
         ].map((tag, i) => (
-           <span key={i} className="px-3 py-1 rounded-full bg-b2u-blue/10 dark:bg-b2u-blue/20 text-b2u-blue dark:text-b2u-cyan text-sm font-medium border border-b2u-blue/10">
+           <span key={i} className="px-5 py-3 rounded-xl bg-white/50 dark:bg-slate-800/50 text-slate-800 dark:text-b2u-cyan text-lg font-medium border border-slate-200 dark:border-slate-700 shadow-sm">
              {tag}
            </span>
         ))}
@@ -225,7 +229,7 @@ const referenceData = [
     id: 13,
     title: "Why Partner With B2U?",
     content: (
-      <ul className="space-y-3">
+      <ul className="space-y-5">
          {[
            "Expertise in Sri Lankan fintech ecosystem",
            "Fully aligned with CBSL’s digital roadmap",
@@ -233,8 +237,8 @@ const referenceData = [
            "No operational burden to the bank",
            "Shared vision for a cashless Sri Lanka"
          ].map((item, i) => (
-            <li key={i} className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-               <div className="w-1.5 h-1.5 bg-b2u-teal rotate-45" />
+            <li key={i} className="flex items-center gap-4 text-xl text-slate-700 dark:text-slate-200 p-2">
+               <div className="w-3 h-3 bg-b2u-teal rotate-45 shrink-0 shadow-[0_0_8px_rgba(46,209,168,0.8)]" />
                {item}
             </li>
          ))}
@@ -539,17 +543,17 @@ export const MerchantQRView: React.FC = () => {
 
       </div>
 
-      {/* Slide Show Modal - Enlarged */}
+      {/* Slide Show Modal - Full Screen */}
       {activeRefIndex !== null && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4">
            {/* Backdrop */}
            <div 
-             className="absolute inset-0 bg-slate-900/90 backdrop-blur-md transition-opacity"
+             className="absolute inset-0 bg-slate-900/95 backdrop-blur-lg transition-opacity"
              onClick={() => setActiveRefIndex(null)}
            ></div>
            
-           {/* Modal Content - Expanded width to max-w-6xl */}
-           <div className="relative w-full max-w-6xl glass-panel rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[60vh] animate-float">
+           {/* Modal Content - Maximize View (95vw, 90vh) */}
+           <div className="relative w-full h-full md:w-[95vw] md:h-[90vh] glass-panel rounded-none md:rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-hidden flex flex-col md:flex-row animate-float">
               
               {/* Neural Network Background INSIDE Modal */}
               <div className="absolute inset-0 z-0">
@@ -559,50 +563,54 @@ export const MerchantQRView: React.FC = () => {
               {/* Close Button */}
               <button 
                 onClick={() => setActiveRefIndex(null)}
-                className="absolute top-4 right-4 z-30 p-2 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-slate-500 dark:text-slate-300 transition-colors hover:rotate-90 duration-200"
+                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300 transition-colors hover:rotate-90 duration-200"
               >
-                 <X size={20} />
+                 <X size={24} />
               </button>
 
-              {/* Sidebar / Index - z-10 to sit above network */}
-              <div className="relative z-10 w-full md:w-1/4 bg-slate-100/80 dark:bg-slate-900/60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 p-6 flex flex-col justify-center overflow-hidden">
+              {/* Sidebar / Index - Transparent for bg visibility */}
+              <div className="relative z-10 w-full md:w-1/4 bg-slate-100/40 dark:bg-slate-900/40 border-b md:border-b-0 md:border-r border-slate-200/50 dark:border-slate-700/50 p-8 flex flex-col justify-center overflow-hidden backdrop-blur-sm">
                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-b2u-blue to-b2u-teal"></div>
-                 <span className="text-8xl font-black text-slate-400 dark:text-slate-600 absolute -bottom-4 -right-4 select-none opacity-20">
+                 <span className="text-[12rem] font-black text-slate-400 dark:text-slate-500 absolute -bottom-10 -right-10 select-none opacity-10">
                     {String(referenceData[activeRefIndex].id).padStart(2, '0')}
                  </span>
                  <div className="relative z-10">
-                    <span className="text-xs font-bold uppercase tracking-widest text-b2u-blue dark:text-b2u-teal mb-2 block">
+                    <span className="text-sm font-bold uppercase tracking-widest text-b2u-blue dark:text-b2u-teal mb-3 block">
                        Section {referenceData[activeRefIndex].id} / {referenceData.length}
                     </span>
-                    <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+                    <h3 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
                        {referenceData[activeRefIndex].title}
                     </h3>
                  </div>
               </div>
 
-              {/* Content Area - z-10 to sit above network */}
-              <div className="relative z-10 w-full md:w-3/4 p-8 md:px-16 md:py-12 flex flex-col justify-between bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl">
-                 <div className="prose prose-lg dark:prose-invert max-w-none">
-                    {referenceData[activeRefIndex].content}
+              {/* Content Area - Transparent for bg visibility */}
+              <div className="relative z-10 w-full md:w-3/4 p-8 md:px-20 md:py-16 flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm">
+                 
+                 {/* Center Content Wrapper */}
+                 <div className="flex-1 flex flex-col justify-center">
+                    <div className="prose prose-lg md:prose-xl dark:prose-invert max-w-none">
+                        {referenceData[activeRefIndex].content}
+                    </div>
                  </div>
                  
-                 {/* Bottom Navigation - Replaces side buttons */}
-                 <div className="flex justify-between items-center mt-12 pt-6 border-t border-slate-200 dark:border-slate-700">
-                    <span className="text-xs font-mono text-slate-400 dark:text-slate-500 hidden md:block">
+                 {/* Bottom Navigation */}
+                 <div className="flex justify-between items-center mt-12 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                    <span className="text-sm font-mono text-slate-500 dark:text-slate-400 hidden md:block">
                         Use Arrow Keys to Navigate
                     </span>
-                    <div className="flex items-center gap-4 ml-auto w-full md:w-auto justify-between md:justify-end">
+                    <div className="flex items-center gap-6 ml-auto w-full md:w-auto justify-between md:justify-end">
                         <button 
                             onClick={handlePrevRef} 
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors"
+                            className="flex items-center gap-2 px-6 py-3 rounded-xl hover:bg-slate-100/50 dark:hover:bg-slate-800/50 text-base font-medium text-slate-700 dark:text-slate-200 transition-colors"
                         >
-                            <ChevronLeft size={18} /> Previous
+                            <ChevronLeft size={20} /> Previous
                         </button>
                         <button 
                             onClick={handleNextRef} 
-                            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-b2u-blue hover:bg-b2u-blue/90 text-white text-sm font-bold shadow-lg shadow-b2u-blue/20 transition-all hover:translate-x-1"
+                            className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-b2u-blue via-b2u-cyan to-b2u-teal bg-[length:200%_200%] animate-gradient text-white text-base font-bold shadow-lg shadow-b2u-blue/30 transition-all hover:scale-105"
                         >
-                            Next <ChevronRight size={18} />
+                            Next <ChevronRight size={20} />
                         </button>
                     </div>
                  </div>
