@@ -8,6 +8,7 @@ import SpaceNetwork from './SpaceNetwork';
 import { AuthMode } from '../types';
 import { AnimatedCounter } from './AnimatedCounter';
 import { MockQRTransaction } from './MockQRTransaction';
+import { loginWithPin, qrBaseUrl } from '../lib/authClient';
 
 const referenceData = [
   {
@@ -250,6 +251,8 @@ const referenceData = [
   }
 ];
 
+const qrDestination = `${qrBaseUrl}/generate-qr`;
+
 export const MerchantQRView: React.FC = () => {
   const [authMode, setAuthMode] = useState<AuthMode>('signin');
   const [walletAmount, setWalletAmount] = useState(84392.50);
@@ -259,6 +262,15 @@ export const MerchantQRView: React.FC = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [lastIncrement, setLastIncrement] = useState(0);
   const [activeRefIndex, setActiveRefIndex] = useState<number | null>(null);
+  const [identifier, setIdentifier] = useState('');
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [signing, setSigning] = useState(false);
+
+  useEffect(() => {
+    setError(null);
+    setSigning(false);
+  }, [authMode]);
 
   // Simulate Live Transactions
   useEffect(() => {
@@ -297,6 +309,44 @@ export const MerchantQRView: React.FC = () => {
     "Empowering Sri Lankan SMEs with next-gen financial tools.",
     "Join thousands of merchants scaling effortlessly with B2U."
   ];
+
+  const handleSigninSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authMode !== 'signin' || signing) return;
+
+    setError(null);
+
+    if (!identifier.trim()) {
+      setError('Please enter an email or phone number to sign in.');
+      return;
+    }
+
+    if (!/^\d{4,6}$/.test(pin)) {
+      setError('PIN must be 4 to 6 digits.');
+      return;
+    }
+
+    setSigning(true);
+    try {
+      const res = await loginWithPin({ identifier: identifier.trim(), pin });
+      if (!res.ok) {
+        setError('message' in res ? res.message : 'Sign-in failed');
+        return;
+      }
+
+      const newTab = window.open(qrDestination, '_blank', 'noopener,noreferrer');
+      if (!newTab) {
+        setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
+        return;
+      }
+      newTab.focus?.();
+    } catch (err) {
+      console.error('PIN sign-in failed', err);
+      setError('Unable to sign in right now. Please try again.');
+    } finally {
+      setSigning(false);
+    }
+  };
 
   const handleNextRef = () => {
     if (activeRefIndex === null) return;
@@ -477,48 +527,92 @@ export const MerchantQRView: React.FC = () => {
                 </p>
             </div>
 
-            <form className="space-y-3 md:space-y-4" onSubmit={(e) => e.preventDefault()}>
-                {authMode === 'signup' && (
-                <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Business Name</label>
-                    <input 
-                    type="text" 
-                    className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
-                    placeholder="e.g. Silva Stores"
-                    />
-                </div>
-                )}
-
+            <form className="space-y-3 md:space-y-4" onSubmit={handleSigninSubmit}>
+              {authMode === 'signin' ? (
+              <>
                 <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Email / Mobile</label>
                 <input 
-                    type="text" 
-                    className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
-                    placeholder="contact@business.lk"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  autoComplete="username"
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
+                  placeholder="contact@business.lk"
                 />
                 </div>
 
                 <div className="space-y-1">
                 <div className="flex justify-between">
-                    <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Password</label>
-                    {authMode === 'signin' && (
-                    <a href="#" className="text-xs font-medium text-b2u-blue hover:text-b2u-teal">Forgot?</a>
-                    )}
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">PIN</label>
+                  <a href="#" className="text-xs font-medium text-b2u-blue hover:text-b2u-teal">Forgot?</a>
                 </div>
                 <div className="relative">
-                    <input 
-                    type="password" 
-                    className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
-                    placeholder="••••••••"
-                    />
-                    <Lock className="absolute right-3 top-3 text-slate-400" size={16} />
+                  <input 
+                  type="password"
+                  inputMode="numeric"
+                  pattern="\d{4,6}"
+                  maxLength={6}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  autoComplete="one-time-code"
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all tracking-[0.3em]"
+                  placeholder="••••"
+                  />
+                  <Lock className="absolute right-3 top-3 text-slate-400" size={16} />
                 </div>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 ml-1">4-6 digit access PIN</p>
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-b2u-blue dark:to-b2u-cyan text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-b2u-blue/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 group mt-2">
-                {authMode === 'signin' ? 'Sign In' : 'Create Account'}
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                {error && (
+                <div className="text-xs font-semibold text-red-600 bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 rounded-xl px-4 py-2">
+                  {error}
+                </div>
+                )}
+              </>
+              ) : (
+              <>
+                <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Business Name</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
+                  placeholder="e.g. Silva Stores"
+                />
+                </div>
+
+                <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Email / Mobile</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
+                  placeholder="contact@business.lk"
+                />
+                </div>
+
+                <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Password</label>
+                <div className="relative">
+                  <input 
+                  type="password" 
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-b2u-blue/50 focus:border-b2u-blue transition-all"
+                  placeholder="••••••••"
+                  />
+                  <Lock className="absolute right-3 top-3 text-slate-400" size={16} />
+                </div>
+                </div>
+              </>
+              )}
+
+              <button 
+              type="submit"
+              disabled={authMode === 'signin' && signing}
+              aria-busy={authMode === 'signin' && signing}
+              className="w-full bg-gradient-to-r from-slate-900 to-slate-800 dark:from-b2u-blue dark:to-b2u-cyan text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-b2u-blue/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 group mt-2 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
+              >
+              {authMode === 'signin' ? (signing ? 'Signing In...' : 'Sign In') : 'Create Account'}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
             </form>
 
             <div className="mt-4 md:mt-6 text-center">
