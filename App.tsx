@@ -7,10 +7,38 @@ import { HomeView } from './components/HomeView';
 import { ERPView } from './components/ERPView';
 import { BookingView } from './components/BookingView';
 
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home' },
+  { id: 'merchant-qr', label: 'Merchant QR' },
+  { id: 'erp', label: 'ERP Solutions' },
+  { id: 'booking', label: 'Online Booking' },
+] as const;
+
+const DEFAULT_VIEW = NAV_ITEMS[0].id;
+const NAV_ITEM_IDS = new Set<string>(NAV_ITEMS.map((item) => item.id));
+
+const getInitialView = () => {
+  if (typeof window === 'undefined') return DEFAULT_VIEW;
+
+  const params = new URLSearchParams(window.location.search);
+  const viewFromQuery = params.get('view');
+  if (viewFromQuery && NAV_ITEM_IDS.has(viewFromQuery)) {
+    return viewFromQuery;
+  }
+
+  const hashValue = window.location.hash.replace(/^#/, '');
+  if (hashValue && NAV_ITEM_IDS.has(hashValue)) {
+    return hashValue;
+  }
+
+  return DEFAULT_VIEW;
+};
+
 function App() {
   const [isDark, setIsDark] = useState(false);
-  const [currentView, setCurrentView] = useState('home');
+  const [currentView, setCurrentView] = useState(() => getInitialView());
   const videoRef = useRef<HTMLVideoElement>(null);
+  const navItems = NAV_ITEMS;
 
   // Toggle Dark Mode
   useEffect(() => {
@@ -31,12 +59,12 @@ function App() {
     }
   }, []);
 
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'merchant-qr', label: 'Merchant QR' },
-    { id: 'erp', label: 'ERP Solutions' },
-    { id: 'booking', label: 'Online Booking' },
-  ];
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('view', currentView);
+    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+  }, [currentView]);
 
   const renderView = () => {
     switch(currentView) {
