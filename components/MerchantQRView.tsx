@@ -326,23 +326,38 @@ export const MerchantQRView: React.FC = () => {
       return;
     }
 
+    const qrWindow = window.open('', '_blank');
+    if (!qrWindow) {
+      setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
+      return;
+    }
+    qrWindow.opener = null;
+    qrWindow.document.title = 'Redirecting to B2U QR';
+    qrWindow.document.body.innerHTML = `
+      <style>
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #020617; color: white; }
+        .pulse { width: 48px; height: 48px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); border-top-color: #2ED1A8; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      </style>
+      <div class="pulse" aria-hidden="true"></div>
+      <p style="margin-top: 16px; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Preparing secure session…</p>
+    `;
+
     setSigning(true);
     try {
       const res = await loginWithPin({ identifier: identifier.trim(), pin });
       if (!res.ok) {
         setError('message' in res ? res.message : 'Sign-in failed');
+        qrWindow.close();
         return;
       }
 
-      const newTab = window.open(qrDestination, '_blank', 'noopener,noreferrer');
-      if (!newTab) {
-        setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
-        return;
-      }
-      newTab.focus?.();
+      qrWindow.location.replace(qrDestination);
+      qrWindow.focus?.();
     } catch (err) {
       console.error('PIN sign-in failed', err);
       setError('Unable to sign in right now. Please try again.');
+      qrWindow.close();
     } finally {
       setSigning(false);
     }
