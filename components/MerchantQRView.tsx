@@ -10,6 +10,8 @@ import { AnimatedCounter } from './AnimatedCounter';
 import { MockQRTransaction } from './MockQRTransaction';
 import { loginWithPin, qrBaseUrl } from '../lib/authClient';
 
+const LAST_SIGNIN_IDENTIFIER_KEY = 'b2u:last-signin-identifier';
+
 const referenceData = [
   {
     id: 1,
@@ -271,6 +273,29 @@ export const MerchantQRView: React.FC = () => {
     setError(null);
     setSigning(false);
   }, [authMode]);
+
+  useEffect(() => {
+    if (authMode !== 'signin') return;
+    try {
+      const savedIdentifier = localStorage.getItem(LAST_SIGNIN_IDENTIFIER_KEY);
+      if (savedIdentifier) {
+        setIdentifier(savedIdentifier);
+      }
+    } catch (storageError) {
+      console.warn('Unable to read stored sign-in identifier', storageError);
+    }
+  }, [authMode]);
+
+  useEffect(() => {
+    if (authMode !== 'signin') return;
+    const trimmedIdentifier = identifier.trim();
+    if (!trimmedIdentifier) return;
+    try {
+      localStorage.setItem(LAST_SIGNIN_IDENTIFIER_KEY, trimmedIdentifier);
+    } catch (storageError) {
+      console.warn('Unable to persist sign-in identifier', storageError);
+    }
+  }, [identifier, authMode]);
 
   // Simulate Live Transactions
   useEffect(() => {
