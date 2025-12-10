@@ -436,6 +436,29 @@ export const MerchantQRView: React.FC = () => {
     }
   };
 
+  const openExternalResetPin = () => {
+    const resetWindow = window.open('', '_blank');
+    if (!resetWindow) {
+      setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
+      return;
+    }
+    resetWindow.opener = null;
+    resetWindow.document.title = 'B2U - Reset PIN';
+    resetWindow.document.body.innerHTML = `
+      <style>body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;background:#020617;color:#fff} .pulse{width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);border-top-color:#2ED1A8;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style>
+      <div class="pulse" aria-hidden="true"></div>
+      <p style="margin-top:16px;font-size:14px;color:rgba(255,255,255,0.8);">Opening reset PIN page…</p>
+    `;
+    try {
+      resetWindow.location.replace(`${qrBaseUrl}/reset-pin`);
+      resetWindow.focus?.();
+    } catch (err) {
+      console.error('Failed to open reset-pin page', err);
+      resetWindow.close();
+      setError('Unable to open reset PIN page. Please try again.');
+    }
+  };
+
   const handleNextRef = () => {
     if (activeRefIndex === null) return;
     setActiveRefIndex((prev) => (prev !== null && prev < referenceData.length - 1 ? prev + 1 : 0));
@@ -633,7 +656,13 @@ export const MerchantQRView: React.FC = () => {
                 <div className="space-y-1">
                 <div className="flex justify-between">
                   <label className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">PIN</label>
-                  <a href="#" className="text-xs font-medium text-b2u-blue hover:text-b2u-teal">Forgot?</a>
+                  <a
+                    href="#"
+                    onClick={(ev) => { ev.preventDefault(); openExternalResetPin(); }}
+                    className="text-xs font-medium text-b2u-blue hover:text-b2u-teal"
+                  >
+                    Forgot?
+                  </a>
                 </div>
                 <div className="relative">
                   <input 
