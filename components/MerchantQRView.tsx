@@ -337,7 +337,32 @@ export const MerchantQRView: React.FC = () => {
 
   const handleSigninSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (authMode !== 'signin' || signing) return;
+    if (signing) return;
+
+    // If we're in signup mode, open the external QR app signup page in a new tab
+    if (authMode === 'signup') {
+      const signupWindow = window.open('', '_blank');
+      if (!signupWindow) {
+        setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
+        return;
+      }
+      signupWindow.opener = null;
+      signupWindow.document.title = 'B2U - Create Account';
+      signupWindow.document.body.innerHTML = `
+        <style>body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;background:#020617;color:#fff} .pulse{width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);border-top-color:#2ED1A8;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style>
+        <div class="pulse" aria-hidden="true"></div>
+        <p style="margin-top:16px;font-size:14px;color:rgba(255,255,255,0.8);">Opening signup page…</p>
+      `;
+      try {
+        signupWindow.location.replace(`${qrBaseUrl}/signup`);
+        signupWindow.focus?.();
+      } catch (err) {
+        console.error('Failed to open signup page', err);
+        signupWindow.close();
+        setError('Unable to open signup page. Please try again.');
+      }
+      return;
+    }
 
     setError(null);
 
@@ -385,6 +410,29 @@ export const MerchantQRView: React.FC = () => {
       qrWindow.close();
     } finally {
       setSigning(false);
+    }
+  };
+
+  const openExternalSignup = () => {
+    const signupWindow = window.open('', '_blank');
+    if (!signupWindow) {
+      setError('Pop-up blocked. Please allow the QR portal to open in a new tab.');
+      return;
+    }
+    signupWindow.opener = null;
+    signupWindow.document.title = 'B2U - Create Account';
+    signupWindow.document.body.innerHTML = `
+      <style>body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;background:#020617;color:#fff} .pulse{width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);border-top-color:#2ED1A8;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style>
+      <div class="pulse" aria-hidden="true"></div>
+      <p style="margin-top:16px;font-size:14px;color:rgba(255,255,255,0.8);">Opening signup page…</p>
+    `;
+    try {
+      signupWindow.location.replace(`${qrBaseUrl}/signup`);
+      signupWindow.focus?.();
+    } catch (err) {
+      console.error('Failed to open signup page', err);
+      signupWindow.close();
+      setError('Unable to open signup page. Please try again.');
     }
   };
 
@@ -656,11 +704,17 @@ export const MerchantQRView: React.FC = () => {
             </form>
 
             <div className="mt-4 md:mt-6 text-center">
-                <button 
-                onClick={() => setAuthMode(authMode === 'signin' ? 'signup' : 'signin')}
-                className="text-xs md:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-b2u-blue dark:hover:text-white transition-colors"
+                <button
+                  onClick={() => {
+                    if (authMode === 'signin') {
+                      openExternalSignup();
+                    } else {
+                      setAuthMode('signin');
+                    }
+                  }}
+                  className="text-xs md:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-b2u-blue dark:hover:text-white transition-colors"
                 >
-                {authMode === 'signin' ? "New here? Create an account" : "Already have an account? Sign in"}
+                  {authMode === 'signin' ? 'New here? Create an account' : 'Already have an account? Sign in'}
                 </button>
             </div>
             </div>
