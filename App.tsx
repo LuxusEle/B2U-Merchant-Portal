@@ -78,6 +78,19 @@ function App() {
 
   return (
     <div className={`relative min-h-screen w-full font-sans overflow-x-hidden transition-colors duration-500 ${isDark ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'}`}>
+      {/* Global: hide number input spin buttons for better presentation */}
+      <style>{`
+        /* Chrome, Safari, Edge, Opera */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        /* Firefox */
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
       
       {/* Background Container - Fixed to Viewport */}
       <div className="fixed inset-0 z-0 overflow-hidden">
