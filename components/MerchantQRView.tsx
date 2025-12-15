@@ -32,20 +32,47 @@ export const MerchantQRView: React.FC = () => {
 
   // Inputs for merchant benefits panel (id:5)
   const [totalSalesAmount, setTotalSalesAmount] = useState<string>('');
+  // numeric backing value for total sales (keeps a reliable number even when
+  // the input switches to a compact display string like "12.3 K")
+  const [totalSalesNumber, setTotalSalesNumber] = useState<number | null>(null);
+  const [totalSalesShowingCompact, setTotalSalesShowingCompact] = useState<boolean>(false);
   const [percentage, setPercentage] = useState<string>('');
   const percentageInputRef = useRef<HTMLInputElement | null>(null);
   const [showInputs, setShowInputs] = useState<boolean>(true);
 
-  const parsedAmount = parseFloat((totalSalesAmount || '0').toString().replace(/,/g, '')) || 0;
+  // Prefer the numeric backing value when available; fall back to parsing the
+  // editable string. This allows us to show compact strings in the input while
+  // keeping calculations stable.
+  const parsedAmount = (totalSalesNumber ?? parseFloat((totalSalesAmount || '0').toString().replace(/,/g, ''))) || 0;
   const parsedPercent = (parseFloat((percentage || '0').toString()) || 0) / 100;
   const digitalTransactionsAmount = parsedAmount * parsedPercent;
-  const digitalTransactionsAmountFormatted = `LKR ${digitalTransactionsAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  function formatAmount(value: number | null | undefined, decimals = 2) {
+    if (value === null || value === undefined || isNaN(value as number)) return '';
+
+    const abs = Math.abs(value as number);
+    let formatted: string;
+
+    if (abs >= 1_000_000_000) {
+      formatted = ((value as number) / 1_000_000_000).toFixed(decimals) + ' B';
+    } else if (abs >= 1_000_000) {
+      formatted = ((value as number) / 1_000_000).toFixed(decimals) + ' M';
+    } else if (abs >= 1_000) {
+      formatted = ((value as number) / 1_000).toFixed(decimals) + ' K';
+    } else {
+      formatted = (value as number).toFixed(decimals);
+    }
+
+    return formatted.replace(/\.00$/, '');
+  }
+
+  const digitalTransactionsAmountFormatted = `LKR ${formatAmount(digitalTransactionsAmount, 2)}`;
   const cardCommission = digitalTransactionsAmount * 0.025;
   const qrCommission = digitalTransactionsAmount * 0.01;
-  const cardCommissionFormatted = `LKR ${cardCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const qrCommissionFormatted = `LKR ${qrCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const cardCommissionFormatted = `LKR ${formatAmount(cardCommission, 2)}`;
+  const qrCommissionFormatted = `LKR ${formatAmount(qrCommission, 2)}`;
   const profit = cardCommission - qrCommission;
-  const profitFormatted = `LKR ${profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const profitFormatted = `LKR ${formatAmount(profit, 2)}`;
 
   const referenceData = [
     {
@@ -150,7 +177,7 @@ export const MerchantQRView: React.FC = () => {
           {/* Right column: inputs & computed amount */}
           <div className="flex items-center p-4 rounded-xl bg-white/30 dark:bg-white/5 border border-slate-200 shadow-md dark:border-white/10">
             {showInputs ? (
-              <div className="space-y-8 p-4">
+              <div className="space-y-8 md:p-4">
                 <div className="space-y-4 px-4">
                   <label className="text-md font-bold text-slate-600 dark:text-slate-400 ml-1 uppercase">Total Sales Amount (LKR)</label>
                   <input
@@ -163,6 +190,8 @@ export const MerchantQRView: React.FC = () => {
                       const cleaned = raw.replace(/,/g, '');
                       if (cleaned === '') {
                         setTotalSalesAmount('');
+                        setTotalSalesNumber(null);
+                        setTotalSalesShowingCompact(false);
                         return;
                       }
                       // allow digits and decimal
@@ -176,6 +205,37 @@ export const MerchantQRView: React.FC = () => {
                         ? (decPartRaw.length > 0 ? `${formattedInt}.${decPartRaw}` : `${formattedInt}.`)
                         : formattedInt;
                       setTotalSalesAmount(newValue);
+                      // update numeric backing value
+                      const numeric = parseFloat(cleaned) || 0;
+                      setTotalSalesNumber(numeric);
+                      setTotalSalesShowingCompact(false);
+                    }}
+                    onBlur={() => {
+                      if (totalSalesNumber == null) {
+                        setTotalSalesAmount('');
+                        setTotalSalesShowingCompact(false);
+                        return;
+                      }
+                      setTotalSalesAmount(formatAmount(totalSalesNumber, 2));
+                      setTotalSalesShowingCompact(true);
+                    }}
+                    onFocus={() => {
+                      if (totalSalesShowingCompact && totalSalesNumber != null) {
+                        // convert numeric back to editable string with commas
+                        const s = (totalSalesNumber as number).toString();
+                        const parts = s.split('.');
+                        const intPart = parts[0] || '0';
+                        const decPart = parts[1] || '';
+                        const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        const newValue = decPart ? `${formattedInt}.${decPart}` : formattedInt;
+                        setTotalSalesAmount(newValue);
+                        setTotalSalesShowingCompact(false);
+                        // small timeout to select the input contents after focus
+                        setTimeout(() => {
+                          const el = document.activeElement as HTMLInputElement | null;
+                          el?.select?.();
+                        }, 0);
+                      }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -215,17 +275,17 @@ export const MerchantQRView: React.FC = () => {
 
               </div>
             ) : (
-              <div className="px-4 space-y-8 w-full">
+              <div className="md:px-4 space-y-8 w-full">
                 <div className="mt-3 grid grid-cols-3 gap-3">
                   <div className="col-span-2">
                     <p className="text-md text-slate-500 mb-2">Total Sales</p>
                     <div className="p-3 px-8 rounded-xl bg-gradient-to-r from-b2u-blue/5 to-b2u-cyan/5 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-center min-w-0">
-                      <p className="text-xl font-semibold whitespace-nowrap">LKR {parsedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                      <p className="text-xl font-semibold whitespace-nowrap">LKR {formatAmount(parsedAmount, 2)}</p>
                     </div>
                   </div>
 
                   <div>
-                    <p className="text-md text-slate-500 mb-2">Digital Percentage</p>
+                    <p className="text-md text-slate-500 mb-2">Digital %</p>
                     <div className="p-3 rounded-xl bg-gradient-to-r from-b2u-blue/5 to-b2u-cyan/5 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center">
                       <p className="text-xl font-semibold">{(parseFloat(percentage || '0') || 0)}%</p>
                     </div>
@@ -263,7 +323,7 @@ export const MerchantQRView: React.FC = () => {
 
                 <div className="flex justify-end">
                   <button
-                    onClick={() => { setTotalSalesAmount(''); setPercentage(''); setShowInputs(true); }}
+                    onClick={() => { setTotalSalesAmount(''); setTotalSalesNumber(null); setTotalSalesShowingCompact(false); setPercentage(''); setShowInputs(true); }}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-b2u-blue text-white text-sm font-semibold"
                   >
                     Clear
@@ -964,7 +1024,7 @@ export const MerchantQRView: React.FC = () => {
           ></div>
 
           {/* Modal Content - Maximize View (95vw, 90vh) */}
-          <div className="relative w-full h-full md:w-[95vw] md:h-[90vh] glass-panel rounded-none md:rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-hidden flex flex-col md:flex-row animate-float">
+          <div className="relative w-full h-full md:w-[95vw] md:h-[90vh] glass-panel rounded-none md:rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-auto md:overflow-hidden max-h-screen md:max-h-[90vh] flex flex-col md:flex-row animate-float">
 
             {/* Neural Network Background INSIDE Modal */}
             <div className="absolute inset-0 z-0">
@@ -980,7 +1040,7 @@ export const MerchantQRView: React.FC = () => {
             </button>
 
             {/* Sidebar / Index - Transparent for bg visibility */}
-            <div className="relative z-10 w-full md:w-1/4 bg-slate-100/40 dark:bg-slate-900/40 border-b md:border-b-0 md:border-r border-slate-200/50 dark:border-slate-700/50 p-8 flex flex-col justify-center overflow-hidden backdrop-blur-sm">
+            <div className="relative z-10 w-full md:w-1/4 bg-slate-100/40 dark:bg-slate-900/40 border-b md:border-b-0 md:border-r border-slate-200/50 dark:border-slate-700/50 p-6 md:p-8 flex flex-col justify-start md:justify-center overflow-auto md:overflow-visible backdrop-blur-sm">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-b2u-blue to-b2u-teal"></div>
               <span className="text-[12rem] font-black text-slate-400 dark:text-slate-500 absolute -bottom-10 -right-10 select-none opacity-10">
                 {String(referenceData[activeRefIndex].id).padStart(2, '0')}
@@ -996,10 +1056,10 @@ export const MerchantQRView: React.FC = () => {
             </div>
 
             {/* Content Area - Transparent for bg visibility */}
-            <div className="relative z-10 w-full md:w-3/4 p-8 md:px-20 md:py-16 flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm">
+            <div className="relative z-10 w-full md:w-3/4 p-6 md:p-8 md:px-20 md:py-16 flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm overflow-auto">
 
               {/* Center Content Wrapper */}
-              <div className="flex-1 flex flex-col justify-center">
+              <div className="flex-1 flex flex-col justify-start md:justify-center">
                 <div className="prose prose-lg md:prose-xl dark:prose-invert max-w-none">
                   {referenceData[activeRefIndex].content}
                 </div>
