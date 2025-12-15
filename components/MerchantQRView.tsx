@@ -1024,7 +1024,7 @@ export const MerchantQRView: React.FC = () => {
           ></div>
 
           {/* Modal Content - Maximize View (95vw, 90vh) */}
-          <div className="relative w-full h-full md:w-[95vw] md:h-[90vh] glass-panel rounded-none md:rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-auto md:overflow-hidden max-h-screen md:max-h-[90vh] flex flex-col md:flex-row animate-float">
+          <div className="relative w-full h-full md:w-[95vw] md:h-[90vh] glass-panel rounded-none md:rounded-3xl border border-white/50 dark:border-slate-600 shadow-2xl overflow-auto md:overflow-hidden max-h-screen md:max-h-[90vh] flex flex-col md:flex-row animate-float ">
 
             {/* Neural Network Background INSIDE Modal */}
             <div className="absolute inset-0 z-0">
@@ -1056,7 +1056,7 @@ export const MerchantQRView: React.FC = () => {
             </div>
 
             {/* Content Area - Transparent for bg visibility */}
-            <div className="relative z-10 w-full md:w-3/4 p-6 md:p-8 md:px-20 md:py-16 flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm overflow-auto">
+            <div className="relative z-10 w-full md:w-3/4 p-6 md:p-8 md:px-20 md:py-16 flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm overflow-auto md:overflow-hidden">
 
               {/* Center Content Wrapper */}
               <div className="flex-1 flex flex-col justify-start md:justify-center">
