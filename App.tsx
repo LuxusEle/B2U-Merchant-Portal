@@ -7,12 +7,14 @@ import { HomeView } from './components/HomeView';
 import { ERPView } from './components/ERPView';
 import { BookingView } from './components/BookingView';
 import AdminSignin from './components/AdminSignin';
+import AdminView from './components/AdminView';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'merchant-qr', label: 'Merchant QR' },
   { id: 'erp', label: 'ERP Solutions' },
   { id: 'booking', label: 'Online Booking' },
+  { id: 'admin', label: 'Admin' },
   { id: 'spendex', label: 'SpendEx' },
 ] as const;
 
@@ -42,6 +44,7 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const navItems = NAV_ITEMS;
   const [showAdminSignin, setShowAdminSignin] = useState(false);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const mobileNavRef = useRef<HTMLDivElement | null>(null);
 
@@ -94,6 +97,7 @@ function App() {
       case 'merchant-qr': return <MerchantQRView />;
       case 'erp': return <ERPView />;
       case 'booking': return <BookingView />;
+      case 'admin': return adminAuthenticated ? <AdminView /> : <HomeView onNavigate={setCurrentView} />;
       default: return <HomeView onNavigate={setCurrentView} />;
     }
   };
@@ -156,7 +160,9 @@ function App() {
           
           {/* Navigation Links (Desktop) */}
           <div className="hidden lg:flex items-center gap-2">
-            {navItems.map((item) => (
+            {navItems
+              .filter((item) => item.id !== 'admin' || adminAuthenticated)
+              .map((item) => (
               <button 
                 key={item.id}
                 onClick={() => {
@@ -208,7 +214,9 @@ function App() {
                 {/* Mobile Nav Dropdown */}
                 <div id="mobile-nav" ref={mobileNavRef} className={`absolute right-0 mt-2 w-44 z-40 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden ${mobileNavOpen ? 'block' : 'hidden'}`}>
                   <div className="flex flex-col p-2">
-                    {navItems.map((item) => (
+                    {navItems
+                      .filter((item) => item.id !== 'admin' || adminAuthenticated)
+                      .map((item) => (
                       <button
                         key={item.id}
                         onClick={() => {
@@ -226,10 +234,18 @@ function App() {
                     ))}
 
                     <button
-                      onClick={() => { setMobileNavOpen(false); setShowAdminSignin(true); }}
+                      onClick={() => {
+                        setMobileNavOpen(false);
+                        if (adminAuthenticated) {
+                          setAdminAuthenticated(false);
+                          setCurrentView(DEFAULT_VIEW);
+                        } else {
+                          setShowAdminSignin(true);
+                        }
+                      }}
                       className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
                     >
-                      Admin Signin
+                      {adminAuthenticated ? 'Sign out' : 'Admin Signin'}
                     </button>
 
                     <button
@@ -246,13 +262,29 @@ function App() {
 
         {/* Admin Signin Button (absolute top-right of nav) */}
         <button
-          onClick={() => setShowAdminSignin((s) => !s)}
+          onClick={() => {
+            if (adminAuthenticated) {
+              // sign out
+              setAdminAuthenticated(false);
+              setCurrentView(DEFAULT_VIEW);
+              setShowAdminSignin(false);
+            } else {
+              setShowAdminSignin((s) => !s);
+            }
+          }}
           className="absolute right-6 top-3 hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-semibold border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all"
         >
-          Admin Signin
+          {adminAuthenticated ? 'Sign out' : 'Admin Signin'}
         </button>
 
-        <AdminSignin show={showAdminSignin} onClose={() => setShowAdminSignin(false)} />
+        <AdminSignin
+          show={showAdminSignin}
+          onClose={() => setShowAdminSignin(false)}
+          onAuthSuccess={() => {
+            setAdminAuthenticated(true);
+            setCurrentView('admin');
+          }}
+        />
       </nav>
 
       {/* Main Content Area */}

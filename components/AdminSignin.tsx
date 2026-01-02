@@ -3,9 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 interface Props {
   show: boolean;
   onClose: () => void;
+  onAuthSuccess?: () => void;
 }
 
-const AdminSignin: React.FC<Props> = ({ show, onClose }) => {
+const AdminSignin: React.FC<Props> = ({ show, onClose, onAuthSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signing, setSigning] = useState(false);
@@ -57,11 +58,21 @@ const AdminSignin: React.FC<Props> = ({ show, onClose }) => {
             }
             setSigning(true);
             try {
-              // Replace with real admin auth when available
-              await new Promise((r) => setTimeout(r, 700));
-              onClose();
-              setEmail('');
-              setPassword('');
+              // Simulate small delay
+              await new Promise((r) => setTimeout(r, 400));
+
+              const envEmail = (import.meta as any).env?.VITE_ADMIN_SIGNIN_EMAIL ?? '';
+              const envPass = (import.meta as any).env?.VITE_ADMIN_SIGNIN_PASSWORD ?? '';
+
+              if (email.trim() === envEmail && password === envPass) {
+                onAuthSuccess?.();
+                onClose();
+                setEmail('');
+                setPassword('');
+                setError(null);
+              } else {
+                setError('Invalid admin credentials.');
+              }
             } catch (err) {
               setError('Sign in failed.');
             } finally {
