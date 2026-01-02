@@ -6,6 +6,7 @@ import { MerchantQRView } from './components/MerchantQRView';
 import { HomeView } from './components/HomeView';
 import { ERPView } from './components/ERPView';
 import { BookingView } from './components/BookingView';
+import AdminSignin from './components/AdminSignin';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
@@ -40,6 +41,9 @@ function App() {
   const [currentView, setCurrentView] = useState(() => getInitialView());
   const videoRef = useRef<HTMLVideoElement>(null);
   const navItems = NAV_ITEMS;
+  const [showAdminSignin, setShowAdminSignin] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const mobileNavRef = useRef<HTMLDivElement | null>(null);
 
   // Toggle Dark Mode
   useEffect(() => {
@@ -66,6 +70,23 @@ function App() {
     url.searchParams.set('view', currentView);
     window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
   }, [currentView]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onDocDown = (ev: MouseEvent) => {
+      const target = ev.target as Node | null;
+      if (mobileNavRef.current && target && !mobileNavRef.current.contains(target)) {
+        setMobileNavOpen(false);
+      }
+    };
+    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') setMobileNavOpen(false); };
+    document.addEventListener('mousedown', onDocDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [mobileNavOpen]);
 
   const renderView = () => {
     switch(currentView) {
@@ -127,7 +148,7 @@ function App() {
       </div>
 
       {/* Navigation - Sticky Layer 50 */}
-      <nav className="sticky top-0 z-50 px-4 md:px-6 py-4">
+      <nav className="sticky top-0 z-50 px-4 md:px-6 py-4 relative">
         <div className="max-w-7xl mx-auto flex items-center justify-between backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border border-white/20 dark:border-slate-800 rounded-2xl px-6 py-3 shadow-lg">
           <button onClick={() => setCurrentView('home')} className="focus:outline-none">
              <Logo className="scale-90 md:scale-100" />
@@ -172,27 +193,66 @@ function App() {
               {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-slate-600" />}
             </button>
             
-            {/* Mobile Menu Button (Simple implementation) */}
-            <div className="lg:hidden">
+            {/* Mobile Menu Button (opens nav dropdown) */}
+            <div className="lg:hidden relative">
                 <button 
-                  onClick={() => {
-                    // Simple logic to cycle views on mobile click for demo, or could open drawer
-                    const nextIndex = (navItems.findIndex(n => n.id === currentView) + 1) % navItems.length;
-                    const nextItem = navItems[nextIndex];
-                    if (nextItem.id === 'spendex') {
-                      window.open('https://spendex.b2u.app', '_blank', 'noopener,noreferrer');
-                    } else {
-                      setCurrentView(nextItem.id);
-                    }
-                  }}
+                  onClick={() => setMobileNavOpen((s) => !s)}
                   className="p-2 text-slate-600 dark:text-slate-300"
+                  aria-expanded={mobileNavOpen}
+                  aria-controls="mobile-nav"
                 >
                     <span className="sr-only">Menu</span>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
                 </button>
+
+                {/* Mobile Nav Dropdown */}
+                <div id="mobile-nav" ref={mobileNavRef} className={`absolute right-0 mt-2 w-44 z-40 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden ${mobileNavOpen ? 'block' : 'hidden'}`}>
+                  <div className="flex flex-col p-2">
+                    {navItems.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setMobileNavOpen(false);
+                          if (item.id === 'spendex') {
+                            window.open('https://spendex.b2u.app', '_blank', 'noopener,noreferrer');
+                          } else {
+                            setCurrentView(item.id);
+                          }
+                        }}
+                        className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() => { setMobileNavOpen(false); setShowAdminSignin(true); }}
+                      className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
+                    >
+                      Admin Signin
+                    </button>
+
+                    <button
+                      onClick={() => { setMobileNavOpen(false); document.getElementById('footer-contact')?.scrollIntoView({ behavior: 'smooth' }); }}
+                      className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
+                    >
+                      Contact
+                    </button>
+                  </div>
+                </div>
             </div>
           </div>
         </div>
+
+        {/* Admin Signin Button (absolute top-right of nav) */}
+        <button
+          onClick={() => setShowAdminSignin((s) => !s)}
+          className="absolute right-6 top-3 hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-semibold border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all"
+        >
+          Admin Signin
+        </button>
+
+        <AdminSignin show={showAdminSignin} onClose={() => setShowAdminSignin(false)} />
       </nav>
 
       {/* Main Content Area */}
