@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { id: 'merchant-qr', label: 'Merchant QR' },
   { id: 'erp', label: 'ERP Solutions' },
   { id: 'booking', label: 'Online Booking' },
+  { id: 'spendex', label: 'SpendEx' },
 ] as const;
 
 const DEFAULT_VIEW = NAV_ITEMS[0].id;
@@ -137,7 +138,13 @@ function App() {
             {navItems.map((item) => (
               <button 
                 key={item.id}
-                onClick={() => setCurrentView(item.id)}
+                onClick={() => {
+                  if (item.id === 'spendex') {
+                    window.open('https://spendex.b2u.app', '_blank', 'noopener,noreferrer');
+                  } else {
+                    setCurrentView(item.id);
+                  }
+                }}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 
                   ${currentView === item.id 
                     ? 'bg-b2u-blue/10 text-b2u-blue dark:text-b2u-cyan' 
@@ -171,7 +178,12 @@ function App() {
                   onClick={() => {
                     // Simple logic to cycle views on mobile click for demo, or could open drawer
                     const nextIndex = (navItems.findIndex(n => n.id === currentView) + 1) % navItems.length;
-                    setCurrentView(navItems[nextIndex].id);
+                    const nextItem = navItems[nextIndex];
+                    if (nextItem.id === 'spendex') {
+                      window.open('https://spendex.b2u.app', '_blank', 'noopener,noreferrer');
+                    } else {
+                      setCurrentView(nextItem.id);
+                    }
                   }}
                   className="p-2 text-slate-600 dark:text-slate-300"
                 >
