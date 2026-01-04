@@ -320,7 +320,7 @@ function App() {
                     </li>
                     <li className="flex items-center gap-2">
                         <Phone size={16} className="text-b2u-blue" />
-                        <a href="tel:+94777163564" className="hover:text-b2u-blue">+94 77 163 564</a>
+                        <a href="tel:+94777163564" className="hover:text-b2u-blue">+94 77 716 3564</a>
                     </li>
                     <li className="flex items-start gap-2">
                         <MapPin size={16} className="text-b2u-blue mt-0.5" />
