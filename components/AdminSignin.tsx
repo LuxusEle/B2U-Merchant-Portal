@@ -40,7 +40,7 @@ const AdminSignin: React.FC<Props> = ({ show, onClose, onAuthSuccess }) => {
   return (
     <div
       aria-hidden={!show}
-      className={`absolute right-6 top-full mt-3 z-50 transform origin-top-right transition-all duration-200 ${show ? 'opacity-100 translate-y-2 scale-100 pointer-events-auto' : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'}`}
+      className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 transform origin-top transition-all duration-200 ${show ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'}`}
     >
       <div ref={panelRef} className="w-80 glass-panel rounded-3xl p-6 md:p-6 shadow-2xl border border-white/30 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80">
         <div className="mb-4 text-left">

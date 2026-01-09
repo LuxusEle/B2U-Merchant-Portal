@@ -14,8 +14,8 @@ const NAV_ITEMS = [
   { id: 'merchant-qr', label: 'Merchant QR' },
   { id: 'erp', label: 'ERP Solutions' },
   { id: 'booking', label: 'Online Booking' },
-  { id: 'admin', label: 'Admin' },
   { id: 'spendex', label: 'SpendEx' },
+  { id: 'admin', label: 'Admin' },
 ] as const;
 
 const DEFAULT_VIEW = NAV_ITEMS[0].id;
@@ -160,9 +160,35 @@ function App() {
           
           {/* Navigation Links (Desktop) */}
           <div className="hidden lg:flex items-center gap-2">
-            {navItems
-              .filter((item) => item.id !== 'admin' || adminAuthenticated)
-              .map((item) => (
+            {navItems.map((item) => 
+              item.id === 'admin' ? (
+                <div key={item.id} className="relative">
+                  <button 
+                    onClick={() => {
+                      if (!adminAuthenticated) {
+                        setShowAdminSignin((prev) => !prev);
+                      } else if (currentView === 'admin') {
+                        // Sign out
+                        setAdminAuthenticated(false);
+                        setCurrentView(DEFAULT_VIEW);
+                      } else {
+                        setCurrentView('admin');
+                      }
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 
+                      ${adminAuthenticated && currentView === 'admin'
+                        ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'
+                        : currentView === item.id 
+                        ? 'bg-b2u-blue/10 text-b2u-blue dark:text-b2u-cyan' 
+                        : 'text-slate-600 dark:text-slate-300 hover:text-b2u-blue dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                      }`}
+                  >
+                    {adminAuthenticated && currentView === 'admin' ? 'Signout' : item.label}
+                  </button>
+                  <AdminSignin show={showAdminSignin} onClose={() => setShowAdminSignin(false)} onAuthSuccess={() => { setAdminAuthenticated(true); setCurrentView('admin'); }} />
+                </div>
+              ) : (
               <button 
                 key={item.id}
                 onClick={() => {
@@ -214,39 +240,36 @@ function App() {
                 {/* Mobile Nav Dropdown */}
                 <div id="mobile-nav" ref={mobileNavRef} className={`absolute right-0 mt-2 w-44 z-40 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden ${mobileNavOpen ? 'block' : 'hidden'}`}>
                   <div className="flex flex-col p-2">
-                    {navItems
-                      .filter((item) => item.id !== 'admin' || adminAuthenticated)
-                      .map((item) => (
+                    {navItems.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => {
                           setMobileNavOpen(false);
                           if (item.id === 'spendex') {
                             window.open('https://spendex.b2u.app', '_blank', 'noopener,noreferrer');
+                          } else if (item.id === 'admin') {
+                            if (!adminAuthenticated) {
+                              setShowAdminSignin(true);
+                            } else if (currentView === 'admin') {
+                              // Sign out
+                              setAdminAuthenticated(false);
+                              setCurrentView(DEFAULT_VIEW);
+                            } else {
+                              setCurrentView('admin');
+                            }
                           } else {
                             setCurrentView(item.id);
                           }
                         }}
-                        className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
+                        className={`text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm ${
+                          item.id === 'admin' && adminAuthenticated && currentView === 'admin'
+                            ? 'text-red-600 dark:text-red-400 font-semibold'
+                            : 'text-slate-700 dark:text-slate-200'
+                        }`}
                       >
-                        {item.label}
+                        {item.id === 'admin' && adminAuthenticated && currentView === 'admin' ? 'Signout' : item.label}
                       </button>
                     ))}
-
-                    <button
-                      onClick={() => {
-                        setMobileNavOpen(false);
-                        if (adminAuthenticated) {
-                          setAdminAuthenticated(false);
-                          setCurrentView(DEFAULT_VIEW);
-                        } else {
-                          setShowAdminSignin(true);
-                        }
-                      }}
-                      className="text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
-                    >
-                      {adminAuthenticated ? 'Sign out' : 'Admin Signin'}
-                    </button>
 
                     <button
                       onClick={() => { setMobileNavOpen(false); document.getElementById('footer-contact')?.scrollIntoView({ behavior: 'smooth' }); }}
@@ -259,32 +282,6 @@ function App() {
             </div>
           </div>
         </div>
-
-        {/* Admin Signin Button (absolute top-right of nav) */}
-        <button
-          onClick={() => {
-            if (adminAuthenticated) {
-              // sign out
-              setAdminAuthenticated(false);
-              setCurrentView(DEFAULT_VIEW);
-              setShowAdminSignin(false);
-            } else {
-              setShowAdminSignin((s) => !s);
-            }
-          }}
-          className="absolute right-6 top-3 hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-semibold border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all"
-        >
-          {adminAuthenticated ? 'Sign out' : 'Admin Signin'}
-        </button>
-
-        <AdminSignin
-          show={showAdminSignin}
-          onClose={() => setShowAdminSignin(false)}
-          onAuthSuccess={() => {
-            setAdminAuthenticated(true);
-            setCurrentView('admin');
-          }}
-        />
       </nav>
 
       {/* Main Content Area */}
