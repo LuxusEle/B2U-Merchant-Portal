@@ -313,7 +313,7 @@ function App() {
                 <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                     <li className="flex items-center gap-2">
                         <Mail size={16} className="text-b2u-blue" />
-                        <a href="mailto:adminb2u@gmail.com" className="hover:text-b2u-blue">adminb2u@gmail.com</a>
+                        <a href="mailto:info@b2uapps.com" className="hover:text-b2u-blue">info@b2uapps.com</a>
                     </li>
                     <li className="flex items-center gap-2">
                         <Phone size={16} className="text-b2u-blue" />

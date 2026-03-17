@@ -61,10 +61,26 @@ const AdminSignin: React.FC<Props> = ({ show, onClose, onAuthSuccess }) => {
               // Simulate small delay
               await new Promise((r) => setTimeout(r, 400));
 
-              const envEmail = (import.meta as any).env?.VITE_ADMIN_SIGNIN_EMAIL ?? '';
-              const envPass = (import.meta as any).env?.VITE_ADMIN_SIGNIN_PASSWORD ?? '';
+              const env = (import.meta as any).env || {};
+              // Get all keys starting with VITE_ADMIN_SIGNIN_EMAIL
+              const adminEmailKeys = Object.keys(env).filter(key => key.startsWith('VITE_ADMIN_SIGNIN_EMAIL'));
+              
+              let isAuthenticated = false;
 
-              if (email.trim() === envEmail && password === envPass) {
+              for (const emailKey of adminEmailKeys) {
+                const currentEnvEmail = env[emailKey];
+                // Match with corresponding password key (e.g. VITE_ADMIN_SIGNIN_EMAIL_2 -> VITE_ADMIN_SIGNIN_PASSWORD_2)
+                const suffix = emailKey.replace('VITE_ADMIN_SIGNIN_EMAIL', '');
+                const passwordKey = `VITE_ADMIN_SIGNIN_PASSWORD${suffix}`;
+                const currentEnvPass = env[passwordKey];
+
+                if (email.trim() === currentEnvEmail && password === currentEnvPass) {
+                  isAuthenticated = true;
+                  break;
+                }
+              }
+
+              if (isAuthenticated) {
                 onAuthSuccess?.();
                 onClose();
                 setEmail('');
