@@ -2,6 +2,8 @@ import React from 'react';
 
 const AdminView: React.FC = () => {
   const cargillsLink = (import.meta as any).env?.VITE_CARGILLS_PRESENTATION_LINK || 'https://cargills.vercel.app';
+  const bocLink = (import.meta as any).env?.VITE_BOC_PRESENTATION_LINK || 'https://boc.vercel.app';
+  const glomarkLink = (import.meta as any).env?.VITE_GLOMARK_PRESENTATION_LINK || 'https://glomark.vercel.app';
   const lidoLink = 'https://lanka-qr-demo.vercel.app/signin';
 
   return (
@@ -14,9 +16,30 @@ const AdminView: React.FC = () => {
             href={cargillsLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-b2u-blue via-b2u-cyan to-b2u-teal text-white font-bold shadow-lg hover:shadow-b2u-cyan/40 transition-transform hover:scale-105"
+            className="inline-flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white text-[#ed1c24] font-bold shadow-lg border-2 border-[#ed1c24] hover:bg-red-50 transition-all hover:scale-105"
           >
-            Open Cargills Presentation
+            <img src="/cargills-icon.png" alt="Cargills" className="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-sm" />
+             Cargills Presentation
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 3h7m0 0v7m0-7L10 14" /></svg>
+          </a>
+          <a
+            href={bocLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-[#ffcc00] text-black font-bold shadow-lg border-2 border-black hover:bg-[#ffdb4d] transition-all hover:scale-105"
+          >
+            <img src="/boc-icon.png" alt="BOC" className="w-10 h-10 rounded-full object-cover border border-black/10 shadow-sm" />
+             BOC Presentation
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 3h7m0 0v7m0-7L10 14" /></svg>
+          </a>
+          <a
+            href={glomarkLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white text-[#1a237e] font-bold shadow-lg border-2 border-[#1a237e] hover:bg-blue-50 transition-all hover:scale-105"
+          >
+            <img src="/glomark-icon.jpg" alt="Glomark" className="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-sm" />
+             Glomark Presentation
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 3h7m0 0v7m0-7L10 14" /></svg>
           </a>
           <a
